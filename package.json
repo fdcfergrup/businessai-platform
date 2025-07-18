@@ -1,0 +1,36 @@
+{
+  "name": "businessai-app",
+  "version": "1.0.0",
+  "description": "AI-powered business content generation and social media management platform",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && nodemon index.js",
+    "client": "cd client && npm start",
+    "build": "cd client && npm install && npm run build",
+    "start": "cd server && node index.js",
+    "install-deps": "npm install && cd client && npm install",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "azure-postbuild": "cd client && npm install && npm run build"
+  },
+  "keywords": [
+    "ai",
+    "business",
+    "content-generation",
+    "social-media",
+    "marketing",
+    "automation"
+  ],
+  "author": "BusinessAI Team",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

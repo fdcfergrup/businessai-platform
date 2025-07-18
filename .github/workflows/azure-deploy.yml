@@ -1,0 +1,59 @@
+name: Deploy BusinessAI to Azure
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install root dependencies
+      run: npm install
+
+    - name: Install server dependencies
+      run: |
+        cd server
+        npm install --production
+
+    - name: Install client dependencies and build
+      run: |
+        cd client
+        npm install
+        npm run build
+
+    - name: Create deployment artifact
+      run: |
+        mkdir deployment
+        cp -r server deployment/
+        cp -r client/build deployment/client/
+        cp package.json deployment/
+        cp web.config deployment/
+        cp .deployment deployment/
+        cp deploy.cmd deployment/
+
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v4
+      with:
+        name: businessai-app
+        path: deployment
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'businessai-app-8928'
+        slot-name: 'Production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: deployment
